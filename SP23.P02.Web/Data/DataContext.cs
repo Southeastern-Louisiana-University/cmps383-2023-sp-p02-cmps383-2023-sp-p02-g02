@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SP23.P02.Web.Features.TrainStations;
 
 namespace SP23.P02.Web.Data;
 
@@ -7,7 +8,7 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
     }
-
+    public DbSet<TrainStation> TrainStations { get; set; }
     public DataContext()
     {
     }
