@@ -54,7 +54,26 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRouting();
+app.UseAuthorization();
+app.UseEndpoints(routeBuilder =>
+{
+    routeBuilder.MapControllers();
+});
+
+app.UseStaticFiles();
+
+app.UseSpa(spaBuilder =>
+{
+    spaBuilder.Options.SourcePath = "ClientApp";
+    if (app.Environment.IsDevelopment())
+    {
+        spaBuilder.UseProxyToSpaDevelopmentServer("https://localhost:3000");
+    }
+});
+
+
+//app.MapControllers();
 
 
 app.Run();
