@@ -1,8 +1,10 @@
-﻿namespace SP23.P02.Web.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+namespace SP23.P02.Web.DTOs;
+
+public class LoginDto
 {
-    public class LoginDto
-    {
-        public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
+    [Required]
+    public string UserName { get; set; } = string.Empty;
+    [Required]
+    public string Password { get; set; } = string.Empty;
 }

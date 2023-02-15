@@ -1,4 +1,6 @@
-﻿namespace SP23.P02.Web.Features.TrainStations;
+﻿using SP23.P02.Web.DTOs;
+using SP23.P02.Web.Features.Entities;
+namespace SP23.P02.Web.Features.TrainStations;
 
 public class TrainStationDto
 {
@@ -8,5 +10,5 @@ public class TrainStationDto
 
     public string Address { get; set; }
 
-    public int? ManagerId { get; set; } = null;
+    public UserDto? Manager { get; set; } = null;
 }

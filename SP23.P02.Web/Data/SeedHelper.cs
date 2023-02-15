@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using SP23.P02.Web.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Any;
-using Microsoft.VisualBasic;
 using SP23.P02.Web.Features.Entities;
 using SP23.P02.Web.Features.TrainStations;
-using SP23.P02.Web.User_Account_Authorizations;
 using System.Data;
+using System.Runtime.CompilerServices;
 
 
 namespace SP23.P02.Web.Data;
@@ -15,38 +13,30 @@ public static class SeedHelper
 {
 
 
-    public static async Task Initialize(IServiceProvider services)
+    public static async Task MigrateAndSeed(IServiceProvider services)
     {
-        var context = services.GetRequiredService<DataContext>();
-        await context.Database.MigrateAsync();
+        var dataContext = services.GetRequiredService<DataContext>();
+        await dataContext.Database.MigrateAsync();
 
+        await AddStations(dataContext);
         await AddRoles(services);
         await AddUsers(services);
-
     }
-    public static async Task MigrateAndSeed(DataContext dataContext)
+        
+    private static async Task AddStations(DataContext dataContext)
     {
-        await dataContext.Database.MigrateAsync();
- 
-
-        var trainStations = dataContext.Set<TrainStation>();
-
-        if (!await trainStations.AnyAsync())
+        var trainstations = dataContext.Set<TrainStation>();
+        if (!await trainstations.AnyAsync())
         {
             for (int i = 0; i < 3; i++)
             {
-                var trainstations = new List<TrainStation>
-            {
-                new TrainStation
-                {
-                    Name = "Hammond Train",
-                    Address = "123 Hammond Dr"
-                },
-               
-            };
-
+                dataContext.Set<TrainStation>()
+                    .Add(new TrainStation
+                    {
+                        Name = "Hammond",
+                        Address = "1234 Place st"
+                    });
             }
-
             await dataContext.SaveChangesAsync();
         }
     }
@@ -62,18 +52,21 @@ public static class SeedHelper
         }
 
         await roleManager.CreateAsync(new Role
-        {
-            Name = RoleType.Admin
+        {   
+            Name = "Admin"
         });
 
         await roleManager.CreateAsync(new Role
         {
-            Name = RoleType.User
+            Name = "User"
         });
+
     }
+
+
     private static async Task AddUsers(IServiceProvider services)
     {
-        const string defaultPass = "Password123!";
+        const string defaultPassword = "Password123!";
 
         var userManager = services.GetRequiredService<UserManager<User>>();
         if (userManager.Users.Any())
@@ -83,30 +76,28 @@ public static class SeedHelper
 
         var adminUser = new User
         {
-           UserName = "galkadi"
+            UserName = "galkadi"
         };
-        await userManager.CreateAsync(adminUser, defaultPass);
-        await userManager.AddToRoleAsync(adminUser, RoleType.Admin);
+        await userManager.CreateAsync(adminUser, defaultPassword);
+        await userManager.AddToRoleAsync(adminUser, "Admin");
 
         var bobUser = new User
         {
-         //   UserName = "bob"
+            UserName = "bob"
         };
-        await userManager.CreateAsync(bobUser, defaultPass);
-        await userManager.AddToRoleAsync(bobUser, RoleType.User);
+        await userManager.CreateAsync(bobUser, defaultPassword);
+        await userManager.AddToRoleAsync(bobUser, "User");
 
         var sueUser = new User
         {
-           // UserName = "sue"
+            UserName = "sue"
         };
-        await userManager.CreateAsync(sueUser, defaultPass);
-        await userManager.AddToRoleAsync(sueUser, RoleType.User);
+        await userManager.CreateAsync(sueUser, defaultPassword);
+        await userManager.AddToRoleAsync(sueUser, "User");
 
-        await services.GetRequiredService<DataContext>().SaveChangesAsync();
+    
     }
 
-
-
-
-
 }
+
+   
