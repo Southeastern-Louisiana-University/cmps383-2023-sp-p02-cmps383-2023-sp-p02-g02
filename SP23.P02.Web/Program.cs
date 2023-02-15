@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
 using SP23.P02.Web.Features.Entities;
@@ -8,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // sets up our database connection
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 
-builder.Services.AddIdentity<User, Role>()
+builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<DataContext>();
 
 
@@ -26,6 +27,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -35,8 +41,10 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    await SeedHelper.MigrateAndSeed(db);
+    
+    await SeedHelper.MigrateAndSeed(scope.ServiceProvider);
+
+    
 
 }
 
@@ -49,11 +57,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
-
 app.UseAuthentication();
-app.UseAuthorization();
 
+app.UseAuthorization();
+app.UseRouting();
 app.MapControllers();
 
 
@@ -61,4 +68,5 @@ app.Run();
 
 //see: https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-7.0
 // Hi 383 - this is added so we can test our web project automatically. More on that later
-public partial class Program { }
+
+    public partial class Program { }

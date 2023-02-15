@@ -1,4 +1,5 @@
-﻿namespace SP23.P02.Web.Features.TrainStations;
+﻿using SP23.P02.Web.Features.Entities;
+namespace SP23.P02.Web.Features.TrainStations;
 
 public class TrainStation
 {
@@ -8,5 +9,5 @@ public class TrainStation
 
     public string Address { get; set; }
 
-    public int? ManagerId { get; set; } = null;
+    public User? Manager { get; set; } = null;
 }
