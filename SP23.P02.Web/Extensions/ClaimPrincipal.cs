@@ -9,7 +9,7 @@ namespace SP23.P02.Web.Extensions
         public static string? GetCurrentUserName(this ClaimsPrincipal claimsPrincipal)
         {
 
-            return claimsPrincipal.Identity?.Name;
+            return claimsPrincipal.Identity.Name;
         }
         public static int? GetCurrentUserId(this ClaimsPrincipal claimsPrincipal)
         {
@@ -19,7 +19,7 @@ namespace SP23.P02.Web.Extensions
                 return null;
             }
             return int.Parse(userIdClaimValue);
-        }     
+        }
     }
 }
 

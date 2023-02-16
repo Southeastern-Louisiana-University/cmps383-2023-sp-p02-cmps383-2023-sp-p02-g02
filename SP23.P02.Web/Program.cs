@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // sets up our database connection
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 
-builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<DataContext>();
 
 
@@ -27,10 +27,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-});
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -59,9 +56,13 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
-app.UseAuthorization();
 app.UseRouting();
-app.MapControllers();
+
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+endpoints.MapControllers());
+
 
 
 app.Run();

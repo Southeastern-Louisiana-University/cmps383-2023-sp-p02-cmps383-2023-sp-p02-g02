@@ -9,6 +9,7 @@ using SP23.P02.Web.Features.Entities;
 
 
 
+
 namespace SP23.P02.Web.Controllers;
 
 
@@ -32,7 +33,7 @@ public class AuthenticationController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserDto>> Me()
     {
-        var username = User.Identity?.Name;
+        var username = User.Identity.Name;
         var resultDto = await GetUserDto(userManager.Users).SingleAsync(x => x.UserName == username);
         return Ok(resultDto);
     }
