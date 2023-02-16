@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SP23.P02.Web.Data;
 using SP23.P02.Web.DTOs;
 using SP23.P02.Web.Features.Entities;
 using System.Transactions;
-using SP23.P02.Web.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace SP23.P02.Web.Controllers;
 
@@ -17,11 +16,13 @@ namespace SP23.P02.Web.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly UserManager<User> userManager;
+    private readonly RoleManager<Role> roleManager;
     
 
-    public UsersController(UserManager<User> userManager)
+    public UsersController(UserManager<User> userManager, RoleManager<Role> roleManager)
     {
         this.userManager = userManager;
+        this.roleManager = roleManager;
         
     }
 
@@ -47,6 +48,14 @@ public class UsersController : ControllerBase
             return BadRequest();
         }
 
+        var allRoles = await roleManager.Roles.Select(x => x.Name).ToListAsync();
+        foreach (var role in createDto.Roles) 
+        {
+            if (!allRoles.Contains(role))
+            {
+                return BadRequest("Role does not exist");
+            }
+        }
         try
         {
             var roleResult = await userManager.AddToRolesAsync(newUser, createDto.Roles);
@@ -68,6 +77,9 @@ public class UsersController : ControllerBase
             Roles = createDto.Roles,
             UserName = newUser.UserName,
         });
+
+        
+
     }
 }
     

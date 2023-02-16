@@ -10,5 +10,5 @@ public class TrainStationDto
 
     public string Address { get; set; }
 
-    public UserDto? Manager { get; set; } = null;
+    public int? ManagerId { get; set; } = null;
 }
